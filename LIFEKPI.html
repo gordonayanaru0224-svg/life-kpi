@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="LIFE KPI">
+  <title>LIFE KPI — 人生攻略スコアカード</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hc:#FF6B35;--hc-l:#FFF0EA;--hc-d:#C44D18;
+      --fc:#2196F3;--fc-l:#E3F2FD;--fc-d:#1565C0;
+      --sc:#4CAF50;--sc-l:#E8F5E9;--sc-d:#2E7D32;
+      --sp:#9C27B0;--sp-l:#F3E5F5;--sp-d:#6A1B9A;
+      --gold:#FFB300;--gold-l:#FFF8E1;
+      --txt:#1a1a1a;--txt2:#666;
+      --bd:#e0e0e0;--bg2:#f5f5f5;--bg:#F8F6FF;
+      --card:#ffffff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html{font-size:16px;}
+    body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--txt);}
+    .app{padding:.75rem;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:2rem;}
+    .header{text-align:center;padding:.5rem 0 .2rem;}
+    .htitle{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:var(--txt);line-height:1;}
+    .hsub{font-size:10px;color:var(--txt2);letter-spacing:2px;margin-top:2px;}
+    .mnav{display:flex;align-items:center;justify-content:center;gap:10px;margin:.5rem 0;}
+    .nbtn{background:var(--card);border:.5px solid var(--bd);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:18px;color:var(--txt2);display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+    .nbtn:active{background:var(--bg2);}
+    .mlbl{font-size:15px;font-weight:500;color:var(--txt);min-width:110px;text-align:center;}
+    .banner{background:var(--card);border-radius:16px;border:.5px solid var(--bd);padding:.875rem 1rem;margin-bottom:.6rem;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+    .snum{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:1;color:var(--txt);text-align:center;min-width:60px;}
+    .slbl{font-size:9px;color:var(--txt2);letter-spacing:1px;text-align:center;margin-top:1px;}
+    .bwrap{flex:1;min-width:0;}
+    .btrack{background:var(--bg2);border-radius:8px;height:12px;overflow:hidden;margin-bottom:5px;}
+    .bfill{height:100%;border-radius:8px;background:linear-gradient(90deg,#FF6B35,#FFB300,#4CAF50);transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+    .blbls{display:flex;justify-content:space-between;font-size:9px;color:var(--txt2);}
+    .bgoal{font-size:10px;font-weight:500;margin-top:3px;text-align:right;line-height:1.4;}
+    .ptbadge{background:var(--sp-l);border-radius:10px;padding:8px 10px;text-align:center;border:1.5px dashed var(--sp);min-width:68px;flex-shrink:0;}
+    .pticon{font-size:22px;}
+    .ptlbl{font-size:9px;color:var(--sp-d);font-weight:700;letter-spacing:.3px;margin-top:1px;}
+    .tabs{display:flex;gap:5px;margin-bottom:.6rem;}
+    .tab{flex:1;background:var(--card);border:.5px solid var(--bd);border-radius:12px;padding:9px 3px;cursor:pointer;text-align:center;touch-action:manipulation;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+    .ticon{font-size:15px;}
+    .tlbl{font-size:9px;font-weight:700;letter-spacing:.5px;margin-top:2px;}
+    .tab.all.on{border:2px solid #7B1FA2;background:#F3E5F5;}.tab.all.on .tlbl{color:#4A148C;}
+    .tab.hc.on{border:2px solid var(--hc);background:var(--hc-l);}.tab.hc.on .tlbl{color:var(--hc-d);}
+    .tab.fc.on{border:2px solid var(--fc);background:var(--fc-l);}.tab.fc.on .tlbl{color:var(--fc-d);}
+    .tab.sc.on{border:2px solid var(--sc);background:var(--sc-l);}.tab.sc.on .tlbl{color:var(--sc-d);}
+    .sec{background:var(--card);border-radius:14px;border:.5px solid var(--bd);overflow:hidden;margin-bottom:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+    .shead{padding:10px 13px 8px;display:flex;align-items:center;gap:7px;border-bottom:.5px solid var(--bd);}
+    .sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+    .stitle{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+    .spts{margin-left:auto;font-size:12px;font-weight:700;color:var(--txt2);}
+    .krow{padding:11px 13px;border-bottom:.5px solid var(--bd);display:flex;align-items:flex-start;gap:8px;}
+    .krow:last-child{border-bottom:none;}
+    .kico{font-size:20px;flex-shrink:0;width:28px;text-align:center;margin-top:1px;}
+    .kinfo{flex:1;min-width:0;}
+    .kname{font-size:14px;font-weight:700;color:var(--txt);}
+    .kdesc{margin-top:4px;}
+    .kdesc-row{font-size:11px;color:var(--txt2);line-height:1.6;display:flex;gap:5px;align-items:flex-start;flex-wrap:wrap;}
+    .kdesc-badge{font-size:9px;padding:2px 6px;border-radius:5px;flex-shrink:0;font-weight:700;margin-top:1px;}
+    .badge-3{background:#E8F5E9;color:#2E7D32;}
+    .badge-1{background:#FFF3E0;color:#E65100;}
+    .badge-r{background:#E3F2FD;color:#1565C0;}
+    .badge-off{background:var(--bg2);color:var(--txt2);}
+    .kright{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+    .kbtns{display:flex;gap:4px;}
+    .kbtn{width:42px;height:42px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;touch-action:manipulation;}
+    .kbtn:active{transform:scale(.9);}
+    .kbtn.s3{border-color:#4CAF50;background:#E8F5E9;box-shadow:0 0 0 2.5px #A5D6A7;}
+    .kbtn.s1{border-color:#FF9800;background:#FFF3E0;box-shadow:0 0 0 2.5px #FFCC80;}
+    .kbtn.sr{border-color:#2196F3;background:#E3F2FD;box-shadow:0 0 0 2.5px #90CAF9;}
+    .kbtn.s0{border-color:#B0BEC5;background:#ECEFF1;box-shadow:0 0 0 2.5px #CFD8DC;}
+    .kpts{font-size:12px;font-weight:700;}
+    .crow{padding:12px 13px;display:flex;align-items:center;gap:10px;}
+    .bchk{width:48px;height:48px;border-radius:14px;border:2px solid var(--sc-d);background:var(--sc-l);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;touch-action:manipulation;flex-shrink:0;}
+    .bchk:active{transform:scale(.9);}
+    .bchk.on{background:var(--sc-d);box-shadow:0 4px 14px rgba(46,125,50,.3);}
+    .cinfo{flex:1;}
+    .cname{font-size:14px;font-weight:700;}
+    .csub{font-size:11px;color:var(--txt2);margin-top:1px;}
+    .cpts{font-size:15px;font-weight:700;color:var(--sc-d);}
+    .sp-sec{background:var(--card);border-radius:14px;border:2px solid var(--sp);overflow:hidden;margin-bottom:.6rem;box-shadow:0 2px 8px rgba(156,39,176,.1);}
+    .sp-head{padding:10px 13px 8px;display:flex;align-items:center;gap:7px;border-bottom:.5px solid var(--bd);background:var(--sp-l);}
+    .sp-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--sp-d);}
+    .sp-pts{margin-left:auto;font-size:12px;font-weight:700;color:var(--sp-d);}
+    .sp-body{padding:12px 13px;}
+    .sp-done-wrap{display:flex;align-items:center;gap:8px;}
+    .sp-done-badge{display:flex;align-items:center;gap:8px;background:var(--sp-l);border-radius:10px;padding:10px 12px;flex:1;min-width:0;}
+    .sp-done-text{flex:1;font-size:13px;font-weight:500;color:var(--sp-d);word-break:break-all;}
+    .sp-done-pts{font-size:13px;font-weight:700;color:var(--sp-d);flex-shrink:0;}
+    .sp-action-btns{display:flex;gap:6px;flex-shrink:0;}
+    .sp-edit-btn{background:var(--sp-l);border:1.5px solid var(--sp);border-radius:8px;color:var(--sp-d);font-size:12px;font-weight:700;padding:9px 10px;cursor:pointer;touch-action:manipulation;white-space:nowrap;}
+    .sp-edit-btn:active{opacity:.75;}
+    .sp-clear-btn{background:var(--bg2);border:1.5px solid var(--bd);border-radius:8px;color:var(--txt2);font-size:16px;padding:9px 10px;cursor:pointer;touch-action:manipulation;}
+    .sp-clear-btn:active{opacity:.75;}
+    .sp-input-row{display:flex;gap:8px;align-items:stretch;}
+    .sp-input{flex:1;font-size:14px;font-family:'Noto Sans JP',sans-serif;background:var(--bg2);border:1.5px solid var(--bd);border-radius:10px;padding:11px 12px;outline:none;color:var(--txt);min-width:0;}
+    .sp-input:focus{border-color:var(--sp);}
+    .sp-add{background:var(--sp);color:#fff;border:none;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;touch-action:manipulation;}
+    .sp-add:active{opacity:.8;}
+    .sp-hint{font-size:11px;color:var(--txt2);margin-top:7px;line-height:1.5;}
+    .gsec{background:var(--card);border-radius:14px;border:.5px solid var(--bd);padding:12px 13px;margin-bottom:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+    .ghead{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+    .gtitle{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt2);}
+    .gleg{display:flex;gap:7px;align-items:center;font-size:9px;color:var(--txt2);}
+    .ldot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+    .wrow{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;}
+    .wlbl{font-size:9px;color:var(--txt2);text-align:center;}
+    .dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+    .dc{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;border:.5px solid transparent;}
+    .dc.emp{background:transparent;}
+    .dc.fut{background:var(--bg2);color:var(--txt2);opacity:.4;}
+    .dc.r3{background:#1B5E20;color:#C8E6C9;}
+    .dc.r2{background:#388E3C;color:#E8F5E9;}
+    .dc.r1{background:#81C784;color:#1B5E20;}
+    .dc.r0{background:#EF9A9A;color:#7f0000;}
+    .dc.tod{border-color:var(--gold);border-width:2px;}
+    .hlsec{background:var(--card);border-radius:14px;border:.5px solid var(--bd);padding:13px;margin-bottom:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+    .hltitle{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt2);margin-bottom:10px;}
+    .hlcards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+    .hlcard{background:var(--bg2);border-radius:10px;padding:8px;text-align:center;}
+    .hlnum{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;color:var(--txt);}
+    .hlsub{font-size:9px;color:var(--txt2);margin-top:2px;line-height:1.3;}
+    .hlmsg{margin-top:10px;background:var(--gold-l);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.7;color:#5D4037;border-left:3px solid var(--gold);}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:#212121;color:#fff;padding:11px 18px;border-radius:22px;font-size:13px;font-weight:500;transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;pointer-events:none;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    .yover{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;z-index:1000;flex-direction:column;padding:1rem;}
+    .yover.show{display:flex;}
+    .ybox{background:#fff;border-radius:22px;padding:2rem 1.75rem 1.5rem;text-align:center;width:100%;max-width:320px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2;}
+    @keyframes popIn{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .yemoji2{font-size:60px;animation:flt 2s ease-in-out infinite;display:block;}
+    @keyframes flt{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+    .ytxt{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--sp-d);letter-spacing:2px;margin:10px 0 5px;line-height:1.2;}
+    .ysub{font-size:13px;color:#5D4037;margin-bottom:1.25rem;line-height:1.5;}
+    .ycls{background:var(--sp);color:white;border:none;border-radius:14px;padding:13px 28px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:1px;touch-action:manipulation;width:100%;}
+    .ycls:active{opacity:.85;}
+    .carea{position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;overflow:hidden;}
+    .cp{position:absolute;width:9px;height:9px;animation:fall linear infinite;}
+    @keyframes fall{to{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="htitle">LIFE KPI</div>
+    <div class="hsub">人生攻略スコアカード</div>
+  </div>
+  <div class="mnav">
+    <button class="nbtn" onclick="chM(-1)">‹</button>
+    <span class="mlbl" id="mlbl"></span>
+    <button class="nbtn" onclick="chM(1)">›</button>
+  </div>
+  <div class="banner">
+    <div>
+      <div class="snum" id="tscore">0</div>
+      <div class="slbl">月間PT</div>
+    </div>
+    <div class="bwrap">
+      <div class="btrack"><div class="bfill" id="bfill" style="width:0%"></div></div>
+      <div class="blbls"><span>0</span><span>🎯100pt</span><span>MAX</span></div>
+      <div class="bgoal" id="bgoal"></div>
+    </div>
+    <div class="ptbadge">
+      <div class="pticon">🏋️</div>
+      <div class="ptlbl" id="ptbdg">0/100pt</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab all on" onclick="setTab('all')"><div class="ticon">🎮</div><div class="tlbl" style="color:#4A148C">ALL</div></div>
+    <div class="tab hc" onclick="setTab('hc')"><div class="ticon">💪</div><div class="tlbl" style="color:#C44D18">人的資本</div></div>
+    <div class="tab fc" onclick="setTab('fc')"><div class="ticon">💰</div><div class="tlbl" style="color:#1565C0">金融資本</div></div>
+    <div class="tab sc" onclick="setTab('sc')"><div class="ticon">🤝</div><div class="tlbl" style="color:#2E7D32">社会資本</div></div>
+  </div>
+  <div id="todaySec"></div>
+  <div id="spSec"></div>
+  <div id="gridSec"></div>
+  <div id="hlSec"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="yover" id="yover" onclick="closeYaki(event)">
+  <div class="carea" id="carea"></div>
+  <div class="ybox">
+    <span class="yemoji2">🏋️</span>
+    <div class="ytxt">パーソナルトレーナー<br>予約確定！！</div>
+    <div class="ysub">月間100pt達成おめでとう🎉<br>今月は本気で頑張った自分を褒めよう！</div>
+    <button class="ycls" onclick="closeYaki()">よっしゃ！！予約する！</button>
+  </div>
+</div>
+
+<script>
+const SK='life_kpi_v7';
+const GOAL=100;
+const TODAY=new Date();
+let state={},yakiShown={};
+let cur={y:TODAY.getFullYear(),m:TODAY.getMonth()};
+let tab='all';
+let spEditing=false;
+
+const KPIS=[
+  {id:'sleep',icon:'💤',name:'睡眠',cat:'hc',rows:[
+    {badge:'badge-3',label:'🥳 +3pt',desc:'就寝30分前スマホ断ち ＋ 7時間睡眠'},
+    {badge:'badge-1',label:'😗 +1pt',desc:'7時間睡眠のみ達成'},
+    {badge:'badge-off',label:'😌 お休み',desc:'今日はゆっくり休もう'},
+  ]},
+  {id:'gym',icon:'💪',name:'筋トレ',cat:'hc',rows:[
+    {badge:'badge-3',label:'🥳 +3pt',desc:'腕立て・アブローラー・スクワット 各10回'},
+    {badge:'badge-1',label:'😗 +1pt',desc:'腕立て1回でもやる'},
+    {badge:'badge-off',label:'😌 お休み',desc:'今日は体を休める日'},
+  ]},
+  {id:'work',icon:'💼',name:'仕事完遂',cat:'hc',rows:[
+    {badge:'badge-3',label:'🥳 +3pt',desc:'訪問記録完了 ＋ その他予定業務も全完了'},
+    {badge:'badge-1',label:'😗 +1pt',desc:'訪問記録1件のみ完了'},
+    {badge:'badge-r',label:'🔄 +1pt',desc:'明日以降で調整（スケジュール組み直し済み）'},
+  ]},
+  {id:'youtube',icon:'🎬',name:'YouTube',cat:'hc',rows:[
+    {badge:'badge-3',label:'🥳 +3pt',desc:'投稿予約完了'},
+    {badge:'badge-1',label:'😗 +1pt',desc:'アイデアを1つ考えた'},
+    {badge:'badge-off',label:'😌 お休み',desc:'今日はインプットデー'},
+  ]},
+  {id:'steps',icon:'🚶',name:'歩数',cat:'hc',rows:[
+    {badge:'badge-3',label:'🥳 +3pt',desc:'10,000歩以上'},
+    {badge:'badge-1',label:'😗 +1pt',desc:'3,000歩以上'},
+    {badge:'badge-off',label:'😌 0pt',desc:'3,000歩未満'},
+  ]},
+  {id:'shop',icon:'🛒',name:'スマート補給',cat:'fc',rows:[
+    {badge:'badge-3',label:'🥳 +3pt',desc:'リスト通り購入（プロテイン・おにぎり・ラムネ）or 今日は買い物なし'},
+    {badge:'badge-1',label:'😗 +1pt',desc:'AIに相談の上で購入'},
+    {badge:'badge-off',label:'😌 0pt',desc:'欲求のままに購入してしまった'},
+  ]},
+];
+const CATS={
+  hc:{label:'人的資本 Human Capital',color:'#FF6B35',dot:'#FF6B35',ids:['sleep','gym','work','youtube','steps']},
+  fc:{label:'金融資本 Financial Capital',color:'#2196F3',dot:'#2196F3',ids:['shop']},
+  sc:{label:'社会資本 Social Capital',color:'#4CAF50',dot:'#4CAF50',ids:[]},
+};
+
+function load(){
+  try{state=JSON.parse(localStorage.getItem(SK)||'{}');}catch{state={};}
+  try{yakiShown=JSON.parse(localStorage.getItem(SK+'_y')||'{}');}catch{yakiShown={};}
+}
+function save(){
+  localStorage.setItem(SK,JSON.stringify(state));
+  localStorage.setItem(SK+'_y',JSON.stringify(yakiShown));
+}
+function dkey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function mealKey(y,m){return `${y}-${String(m+1).padStart(2,'0')}-meal`;}
+function spKey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}-sp`;}
+function todayKey(){return dkey(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());}
+function todaySpKey(){return spKey(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());}
+function isCurMonth(y,m){return y===TODAY.getFullYear()&&m===TODAY.getMonth();}
+function ptVal(v){if(v===3)return 3;if(v===1||v==='r')return 1;return 0;}
+function fmtPt(n){return Number.isInteger(n)?n:n.toFixed(1);}
+
+function monthTotal(y,m){
+  const days=new Date(y,m+1,0).getDate();
+  let tot=0;
+  if(state[mealKey(y,m)])tot+=10;
+  for(let d=1;d<=days;d++){
+    if(state[dkey(y,m,d)])KPIS.forEach(k=>tot+=ptVal(state[dkey(y,m,d)][k.id]));
+    const sp=state[spKey(y,m,d)];
+    if(sp&&sp.done)tot+=3;
+  }
+  return Math.round(tot*10)/10;
+}
+function monthCounts(y,m){
+  const days=new Date(y,m+1,0).getDate();
+  let c={sp:0};KPIS.forEach(k=>c[k.id]=0);
+  for(let d=1;d<=days;d++){
+    const ds=state[dkey(y,m,d)]||{};
+    KPIS.forEach(k=>{if(ds[k.id]!==undefined&&ds[k.id]!==0)c[k.id]++;});
+    const sp=state[spKey(y,m,d)];
+    if(sp&&sp.done)c.sp++;
+  }
+  return c;
+}
+function setScore(kpiId,val){
+  if(!isCurMonth(cur.y,cur.m))return;
+  const k=todayKey();
+  if(!state[k])state[k]={};
+  state[k][kpiId]=val;
+  save();renderAll();
+  showToast(val===3?'🥳 最高！ +3pt':val===1?'😗 OK！ +1pt':val==='r'?'🔄 調整済み +1pt':'😌 記録したよ！');
+  checkGoal();
+}
+function toggleMeal(){
+  const k=mealKey(cur.y,cur.m);
+  state[k]=!state[k];save();renderAll();
+  if(state[k])showToast('👩‍👦 +10pt！ 最高の社会資本！');
+  checkGoal();
+}
+function addSpecial(){
+  if(!isCurMonth(cur.y,cur.m))return;
+  const inp=document.getElementById('spInput');
+  if(!inp)return;
+  const txt=inp.value.trim();
+  if(!txt)return;
+  state[todaySpKey()]={text:txt,done:true};
+  spEditing=false;
+  save();renderAll();
+  showToast('⭐ スペシャル達成！ +3pt');
+  checkGoal();
+}
+function editSpecial(){
+  spEditing=true;
+  renderSpecial(cur.y,cur.m);
+  setTimeout(()=>{
+    const inp=document.getElementById('spInput');
+    if(inp){const sp=state[todaySpKey()];if(sp)inp.value=sp.text;inp.focus();}
+  },50);
+}
+function clearSpecial(){
+  if(!isCurMonth(cur.y,cur.m))return;
+  delete state[todaySpKey()];
+  spEditing=false;
+  save();renderAll();
+}
+function checkGoal(){
+  const tot=monthTotal(cur.y,cur.m);
+  const yk=`${cur.y}-${cur.m}`;
+  if(tot>=GOAL&&!yakiShown[yk]){yakiShown[yk]=true;save();setTimeout(showYaki,500);}
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function showYaki(){
+  document.getElementById('yover').classList.add('show');
+  const area=document.getElementById('carea');area.innerHTML='';
+  const cols=['#9C27B0','#FF6B35','#FFB300','#4CAF50','#2196F3','#E91E63'];
+  for(let i=0;i<55;i++){
+    const el=document.createElement('div');el.className='cp';
+    el.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${cols[i%cols.length]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()}s;border-radius:${Math.random()>.5?'50%':'2px'};`;
+    area.appendChild(el);
+  }
+}
+function closeYaki(e){
+  if(!e||e.target===document.getElementById('yover')||e.target.classList.contains('ycls'))
+    document.getElementById('yover').classList.remove('show');
+}
+function chM(d){
+  cur.m+=d;
+  if(cur.m>11){cur.m=0;cur.y++;}
+  if(cur.m<0){cur.m=11;cur.y--;}
+  spEditing=false;renderAll();
+}
+function setTab(t){
+  tab=t;
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('on'));
+  document.querySelector('.tab.'+t).classList.add('on');
+  renderAll();
+}
+function renderAll(){
+  const {y,m}=cur;
+  document.getElementById('mlbl').textContent=y+'年'+(m+1)+'月';
+  const tot=monthTotal(y,m);
+  document.getElementById('tscore').textContent=fmtPt(tot);
+  document.getElementById('bfill').style.width=Math.min(100,(tot/(GOAL*1.2))*100)+'%';
+  document.getElementById('ptbdg').textContent=fmtPt(tot)+'/'+GOAL+'pt';
+  const left=Math.max(0,GOAL-tot);
+  if(tot>=GOAL){
+    document.getElementById('bgoal').innerHTML='🎉 パーソナルトレーナー予約確定！';
+    document.getElementById('bgoal').style.color='#6A1B9A';
+  } else {
+    document.getElementById('bgoal').innerHTML='🏋️ パーソナルトレーナー予約まであと<strong style="color:#6A1B9A">'+fmtPt(left)+'pt</strong>！';
+    document.getElementById('bgoal').style.color='';
+  }
+  renderToday(y,m);renderSpecial(y,m);renderGrid(y,m);renderHL(y,m);
+}
+function renderToday(y,m){
+  const isCur=isCurMonth(y,m);
+  const scores=isCur?(state[todayKey()]||{}):{};
+  const meal=!!state[mealKey(y,m)];
+  const cats=tab==='all'?['hc','fc','sc']:[tab];
+  let html='';
+  cats.forEach(cat=>{
+    const cfg=CATS[cat];
+    const kpis=KPIS.filter(k=>cfg.ids.includes(k.id));
+    let spt=0;kpis.forEach(k=>spt+=ptVal(scores[k.id]));
+    if(cat==='sc'&&meal)spt+=10;
+    html+='<div class="sec" style="border-top:3px solid '+cfg.color+'">'
+      +'<div class="shead"><div class="sdot" style="background:'+cfg.dot+'"></div>'
+      +'<div class="stitle" style="color:'+cfg.dot+'">'+cfg.label+'</div>'
+      +'<div class="spts">'+fmtPt(spt)+'pt</div></div>';
+    kpis.forEach(kpi=>{
+      const v=scores[kpi.id];
+      const pts=ptVal(v);
+      const ptsColor=pts===3?'#2E7D32':pts>0?'#E65100':'#9E9E9E';
+      html+='<div class="krow"><div class="kico">'+kpi.icon+'</div><div class="kinfo">'
+        +'<div class="kname">'+kpi.name+'</div><div class="kdesc">';
+      kpi.rows.forEach(row=>{
+        html+='<div class="kdesc-row"><span class="kdesc-badge '+row.badge+'">'+row.label+'</span><span>'+row.desc+'</span></div>';
+      });
+      html+='</div></div><div class="kright"><div class="kbtns">';
+      kpi.rows.forEach((row,i)=>{
+        const bv=i===0?3:i===1?1:(kpi.id==='work'?'r':0);
+        const em=i===0?'🥳':i===1?'😗':(kpi.id==='work'?'🔄':'😌');
+        const sel=v===bv?(bv===3?'s3':bv===1?'s1':bv==='r'?'sr':'s0'):'';
+        const oc=isCur?'setScore(\''+kpi.id+'\','+(typeof bv==='string'?'\''+bv+'\'':bv)+')':'';
+        html+='<div class="kbtn '+sel+'" onclick="'+oc+'">'+em+'</div>';
+      });
+      html+='</div><div class="kpts" style="color:'+ptsColor+'">'+(pts>0?'+'+pts+'pt':'-')+'</div></div></div>';
+    });
+    if(cat==='sc'){
+      html+='<div class="crow"><div class="bchk '+(meal?'on':'')+'" onclick="toggleMeal()">'+(meal?'✓':'👩‍👦')+'</div>'
+        +'<div class="cinfo"><div class="cname">👩‍👦 母との食事</div><div class="csub">月1回達成で特別 +10pt！</div></div>'
+        +'<div class="cpts">'+(meal?'+10pt':'---')+'</div></div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('todaySec').innerHTML=html;
+}
+function renderSpecial(y,m){
+  if(tab!=='all'&&tab!=='hc'){document.getElementById('spSec').innerHTML='';return;}
+  const isCur=isCurMonth(y,m);
+  const sp=isCur?state[todaySpKey()]:null;
+  let html='<div class="sp-sec"><div class="sp-head"><div class="sdot" style="background:#9C27B0"></div>'
+    +'<div class="sp-title">⭐ スペシャル加点枠</div>'
+    +'<div class="sp-pts">'+(sp&&sp.done?'+3pt':'---')+'</div></div><div class="sp-body">';
+  if(!isCur){
+    html+='<div style="font-size:12px;color:#666;text-align:center;padding:6px 0">過去の記録は変更できません</div>';
+  } else if(sp&&sp.done&&!spEditing){
+    html+='<div class="sp-done-wrap"><div class="sp-done-badge"><span style="font-size:18px">⭐</span>'
+      +'<span class="sp-done-text">'+sp.text+'</span><span class="sp-done-pts">+3pt</span></div>'
+      +'<div class="sp-action-btns">'
+      +'<button class="sp-edit-btn" onclick="editSpecial()">✏️ 編集</button>'
+      +'<button class="sp-clear-btn" onclick="clearSpecial()">✕</button>'
+      +'</div></div>';
+  } else {
+    const ph=sp&&sp.done?sp.text:'今日終わらせた「ずっと後回しにしてたこと」';
+    html+='<div class="sp-input-row">'
+      +'<input class="sp-input" id="spInput" type="text" placeholder="'+ph+'" maxlength="40" onkeydown="if(event.key===\'Enter\')addSpecial()">'
+      +'<button class="sp-add" onclick="addSpecial()">+3pt！</button></div>'
+      +'<div class="sp-hint">💡 例：確定申告の書類整理した／部屋の断捨離した／歯医者に予約入れた</div>';
+  }
+  html+='</div></div>';
+  document.getElementById('spSec').innerHTML=html;
+  if(isCur&&spEditing&&sp){
+    const inp=document.getElementById('spInput');
+    if(inp)inp.value=sp.text;
+  }
+}
+function renderGrid(y,m){
+  const days=new Date(y,m+1,0).getDate();
+  const first=new Date(y,m,1).getDay();
+  let html='<div class="gsec"><div class="ghead"><div class="gtitle">'+(m+1)+'月の軌跡</div>'
+    +'<div class="gleg"><span class="ldot" style="background:#1B5E20"></span>完璧'
+    +'<span class="ldot" style="background:#81C784"></span>OK'
+    +'<span class="ldot" style="background:#EF9A9A"></span>ゼロ</div></div>'
+    +'<div class="wrow">'+['日','月','火','水','木','金','土'].map(d=>'<div class="wlbl">'+d+'</div>').join('')+'</div>'
+    +'<div class="dgrid">';
+  for(let i=0;i<first;i++)html+='<div class="dc emp"></div>';
+  for(let d=1;d<=days;d++){
+    const isTod=isCurMonth(y,m)&&d===TODAY.getDate();
+    const isFut=new Date(y,m,d)>TODAY;
+    let cls='fut',score=0;
+    if(!isFut){
+      const ds=state[dkey(y,m,d)]||{};let rec=false;
+      KPIS.forEach(k=>{if(ds[k.id]!==undefined){rec=true;score+=ptVal(ds[k.id]);}});
+      const sp=state[spKey(y,m,d)];if(sp&&sp.done){rec=true;score+=3;}
+      cls=!rec?'fut':score>=10?'r3':score>=5?'r2':score>=0.5?'r1':'r0';
+    }
+    html+='<div class="dc '+cls+(isTod?' tod':'')+'">'+d+'</div>';
+  }
+  html+='</div></div>';
+  document.getElementById('gridSec').innerHTML=html;
+}
+function renderHL(y,m){
+  const counts=monthCounts(y,m);
+  const meal=!!state[mealKey(y,m)];
+  const msgs=[];
+  if(counts.gym>0)msgs.push('💪 今月は<strong>'+counts.gym+'回</strong>体を動かしました！毎回が未来への投資！');
+  if(counts.sleep>0)msgs.push('💤 <strong>'+counts.sleep+'日</strong>の睡眠を意識できました！脳と体が喜んでいる！');
+  if(counts.youtube>0)msgs.push('🎬 YouTube関連 <strong>'+counts.youtube+'回</strong>行動！コンテンツ力が着実に育っています！');
+  if(counts.steps>0)msgs.push('🚶 歩数を記録した日が<strong>'+counts.steps+'日</strong>！積み重ねが健康資本になっています！');
+  if(counts.work>0)msgs.push('💼 仕事に向き合った日が<strong>'+counts.work+'日</strong>！プロとしての誠実さが光っています！');
+  if(counts.sp>0)msgs.push('⭐ スペシャル達成が<strong>'+counts.sp+'回</strong>！後回しにしてたことをちゃんと片付けた。最高！');
+  if(meal)msgs.push('👩‍👦 今月のお母さんとの食事をクリア！社会資本に花丸！');
+  const msgHtml=msgs.length?msgs.map(m=>'<div style="margin-bottom:5px">'+m+'</div>').join(''):'<div>今月はまだ記録がありません。今日から始めましょう！</div>';
+  document.getElementById('hlSec').innerHTML='<div class="hlsec"><div class="hltitle">月末ハイライト</div>'
+    +'<div class="hlcards">'
+    +'<div class="hlcard"><div class="hlnum">'+(counts.gym||0)+'</div><div class="hlsub">筋トレ<br>記録日数</div></div>'
+    +'<div class="hlcard"><div class="hlnum">'+(counts.steps||0)+'</div><div class="hlsub">歩数<br>記録日数</div></div>'
+    +'<div class="hlcard"><div class="hlnum">'+(counts.sp||0)+'</div><div class="hlsub">スペシャル<br>達成回数</div></div>'
+    +'</div><div class="hlmsg">'+msgHtml+'</div></div>';
+}
+load();renderAll();
+</script>
+</body>
+</html>
